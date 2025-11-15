@@ -5,6 +5,7 @@ import com.kairoscoffee.serviceauthregistre.security.CustomUserDetailsService;
 import com.kairoscoffee.serviceauthregistre.service.JWTService;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -44,13 +45,15 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
 
-                        // Auth público
+                        // =============================================
+                        //        ENDPOINTS PÚBLICOS
+                        // =============================================
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/refresh-token").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/auth0").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/refresh-token").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/logout").permitAll()
 
-                        // Monitorización
                         .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
 
                         // Swagger
@@ -60,7 +63,19 @@ public class SecurityConfig {
                                 "/swagger-ui.html"
                         ).permitAll()
 
-                        // Todo lo demás requiere autenticación
+                        // =============================================
+                        //        ENDPOINTS PROTEGIDOS POR ROLES
+                        // =============================================
+
+                        // Solo ADMIN puede entrar aquí
+                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
+
+                        // CUSTOMER y ADMIN pueden entrar aquí
+                        .requestMatchers("/user/**").hasAnyAuthority("CUSTOMER", "ADMIN")
+
+                        // =============================================
+                        //     Todo lo demás → requiere sesión válida
+                        // =============================================
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
