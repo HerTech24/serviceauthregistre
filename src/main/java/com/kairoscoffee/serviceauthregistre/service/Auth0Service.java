@@ -68,4 +68,8 @@ public class Auth0Service {
             throw new RuntimeException("id_token inválido de Auth0: " + e.getMessage(), e);
         }
     }
+
+    public void checkAuth0Connection() throws Exception {
+        getJwkSource(); // intenta crear RemoteJWKSet con jwksUri
+    }
 }
