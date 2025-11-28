@@ -1,6 +1,7 @@
 package com.kairoscoffee.serviceauthregistre.service;
 
 import com.kairoscoffee.serviceauthregistre.dto.AuthResponse;
+import com.kairoscoffee.serviceauthregistre.dto.UsuarioDTO;
 import com.kairoscoffee.serviceauthregistre.entity.AuthProvider;
 import com.kairoscoffee.serviceauthregistre.entity.RefreshToken;
 import com.kairoscoffee.serviceauthregistre.entity.Usuario;
@@ -28,7 +29,7 @@ public class AuthService {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final JWTService jwtService;
-    private final Auth0Service auth0Service;   // ⚡ Importante
+    private final Auth0Service auth0Service;
 
     // ============================================================
     // 1. REGISTRO LOCAL
@@ -59,7 +60,17 @@ public class AuthService {
                 jwtService.generateToken(usuario.getEmail(), usuario.getRol().getNombre());
         String refreshToken = createRefreshToken(usuario);
 
-        return new AuthResponse(accessToken, refreshToken, "Bearer");
+        // ✅ Crear DTO del usuario
+        UsuarioDTO userDTO = UsuarioDTO.builder()
+                .id(usuario.getId())
+                .nombre(usuario.getNombre())
+                .apellido(usuario.getApellido())
+                .email(usuario.getEmail())
+                .telefono(usuario.getTelefono())
+                .rol(usuario.getRol().getNombre())
+                .build();
+
+        return new AuthResponse(accessToken, refreshToken, "Bearer", userDTO);
     }
 
     // ============================================================
@@ -78,7 +89,17 @@ public class AuthService {
                 jwtService.generateToken(usuario.getEmail(), usuario.getRol().getNombre());
         String refreshToken = createRefreshToken(usuario);
 
-        return new AuthResponse(accessToken, refreshToken, "Bearer");
+        // ✅ Crear DTO del usuario
+        UsuarioDTO userDTO = UsuarioDTO.builder()
+                .id(usuario.getId())
+                .nombre(usuario.getNombre())
+                .apellido(usuario.getApellido())
+                .email(usuario.getEmail())
+                .telefono(usuario.getTelefono())
+                .rol(usuario.getRol().getNombre())
+                .build();
+
+        return new AuthResponse(accessToken, refreshToken, "Bearer", userDTO);
     }
 
     // ============================================================
@@ -142,7 +163,17 @@ public class AuthService {
                 jwtService.generateToken(usuario.getEmail(), usuario.getRol().getNombre());
         String refreshToken = createRefreshToken(usuario);
 
-        return new AuthResponse(accessToken, refreshToken, "Bearer");
+        // ✅ Crear DTO del usuario
+        UsuarioDTO userDTO = UsuarioDTO.builder()
+                .id(usuario.getId())
+                .nombre(usuario.getNombre())
+                .apellido(usuario.getApellido())
+                .email(usuario.getEmail())
+                .telefono(usuario.getTelefono())
+                .rol(usuario.getRol().getNombre())
+                .build();
+
+        return new AuthResponse(accessToken, refreshToken, "Bearer", userDTO);
     }
 
     // ============================================================
@@ -180,7 +211,17 @@ public class AuthService {
         String newAccessToken =
                 jwtService.generateToken(usuario.getEmail(), usuario.getRol().getNombre());
 
-        return new AuthResponse(newAccessToken, refreshToken, "Bearer");
+        // ✅ Crear DTO del usuario para refresh token también
+        UsuarioDTO userDTO = UsuarioDTO.builder()
+                .id(usuario.getId())
+                .nombre(usuario.getNombre())
+                .apellido(usuario.getApellido())
+                .email(usuario.getEmail())
+                .telefono(usuario.getTelefono())
+                .rol(usuario.getRol().getNombre())
+                .build();
+
+        return new AuthResponse(newAccessToken, refreshToken, "Bearer", userDTO);
     }
 
     // ============================================================
